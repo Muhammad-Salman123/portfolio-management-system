@@ -21,6 +21,10 @@ const ProjectSchema = new mongoose.Schema({
   liveLink: {
     type: String,
     default: ''
+  },
+  category: {
+    type: String,
+    default: 'Web Development'
   }
 });
 

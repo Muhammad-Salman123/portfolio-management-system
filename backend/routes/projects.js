@@ -32,13 +32,14 @@ router.get('/', auth, async (req, res) => {
 // ADD a project
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, description, githubLink, liveLink } = req.body;
+    const { title, description, githubLink, liveLink, category } = req.body;
     const project = new Project({
       user: req.user,
       title: title,
       description: description || '',
       githubLink: githubLink || '',
-      liveLink: liveLink || ''
+      liveLink: liveLink || '',
+      category: category || 'Web Development'
     });
     await project.save();
     res.status(201).json(project);
@@ -50,10 +51,10 @@ router.post('/', auth, async (req, res) => {
 // UPDATE a project
 router.put('/:id', auth, async (req, res) => {
   try {
-    const { title, description, githubLink, liveLink } = req.body;
+    const { title, description, githubLink, liveLink, category } = req.body;
     const project = await Project.findOneAndUpdate(
       { _id: req.params.id, user: req.user },
-      { title, description, githubLink, liveLink },
+      { title, description, githubLink, liveLink, category },
       { new: true }
     );
     if (!project) {
