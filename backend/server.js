@@ -15,7 +15,9 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/skills', require('./routes/skills'));
 app.use('/api/projects', require('./routes/projects'));
-app.use('/api/profile', require('./routes/profile'));  // ← THIS LINE IS IMPORTANT
+app.use('/api/profile', require('./routes/profile'));
+app.use('/api/activities', require('./routes/activities'));
+app.use('/api/categories', require('./routes/categories'));  // ← NEW LINE
 
 app.get('/', (req, res) => {
   res.send('Server is running with MongoDB!');

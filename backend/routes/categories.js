@@ -1,5 +1,5 @@
 const express = require('express');
-const Skill = require('../models/Skill');
+const Category = require('../models/Category');
 const Activity = require('../models/Activity');
 const router = express.Router();
 
@@ -9,7 +9,6 @@ const auth = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ message: 'No token, access denied' });
   }
-  
   try {
     const jwt = require('jsonwebtoken');
     const decoded = jwt.verify(token, 'my_secret_key_12345');
@@ -20,88 +19,88 @@ const auth = (req, res, next) => {
   }
 };
 
-// GET all skills for logged-in user
+// GET all categories
 router.get('/', auth, async (req, res) => {
   try {
-    const skills = await Skill.find({ user: req.user });
-    res.json(skills);
+    const categories = await Category.find({ user: req.user });
+    res.json(categories);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// ADD a skill
+// ADD a category
 router.post('/', auth, async (req, res) => {
   try {
-    const { name, level } = req.body;
-    const skill = new Skill({
+    const { name, description } = req.body;
+    const category = new Category({
       user: req.user,
       name: name,
-      level: level || 'Intermediate'
+      description: description || ''
     });
-    await skill.save();
-    
+    await category.save();
+
     // Log activity
     const activity = new Activity({
       user: req.user,
-      action: 'Added Skill',
-      details: `Added skill: ${name}`
+      action: 'Added Category',
+      details: `Added category: ${name}`
     });
     await activity.save();
-    
-    res.status(201).json(skill);
+
+    res.status(201).json(category);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// UPDATE a skill
+// UPDATE a category
 router.put('/:id', auth, async (req, res) => {
   try {
-    const { name, level } = req.body;
-    const skill = await Skill.findOneAndUpdate(
+    const { name, description } = req.body;
+    const category = await Category.findOneAndUpdate(
       { _id: req.params.id, user: req.user },
-      { name, level },
+      { name, description },
       { new: true }
     );
-    if (!skill) {
-      return res.status(404).json({ message: 'Skill not found' });
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
     }
-    
+
     // Log activity
     const activity = new Activity({
       user: req.user,
-      action: 'Updated Skill',
-      details: `Updated skill: ${name}`
+      action: 'Updated Category',
+      details: `Updated category: ${name}`
     });
     await activity.save();
-    
-    res.json(skill);
+
+    res.json(category);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// DELETE a skill
+// DELETE a category
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const skill = await Skill.findOneAndDelete({
+    const category = await Category.findOneAndDelete({
       _id: req.params.id,
       user: req.user
     });
-    if (!skill) {
-      return res.status(404).json({ message: 'Skill not found' });
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
     }
-    
+
     // Log activity
     const activity = new Activity({
       user: req.user,
-      action: 'Deleted Skill',
-      details: `Deleted skill: ${skill.name}`
+      action: 'Deleted Category',
+      details: `Deleted category: ${category.name}`
     });
     await activity.save();
-    
-    res.json({ message: 'Skill deleted successfully' });
+
+    res.json({ message: 'Category deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

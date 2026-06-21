@@ -42,7 +42,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: fileFilter
 });
 
@@ -50,9 +50,6 @@ const upload = multer({
 router.get('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user).select('-password');
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -63,7 +60,6 @@ router.get('/', auth, async (req, res) => {
 router.put('/', auth, async (req, res) => {
   try {
     const { personalInfo, about, contact, profileImage } = req.body;
-    
     const user = await User.findById(req.user);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -83,7 +79,6 @@ router.put('/', auth, async (req, res) => {
     }
     
     await user.save();
-    
     const updatedUser = await User.findById(req.user).select('-password');
     res.json(updatedUser);
   } catch (error) {
@@ -100,7 +95,6 @@ router.post('/upload-image', auth, upload.single('profileImage'), async (req, re
     }
     
     const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    
     const user = await User.findById(req.user);
     user.profileImage = imageUrl;
     await user.save();

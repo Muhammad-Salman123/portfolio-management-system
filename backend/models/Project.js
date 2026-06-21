@@ -25,6 +25,10 @@ const ProjectSchema = new mongoose.Schema({
   category: {
     type: String,
     default: 'Web Development'
+  },
+  image: {
+    type: String,
+    default: ''
   }
 });
 
